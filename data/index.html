@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP32 Neon Dashboard</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">ESP32 ACCESS POINT</p>
+      <h1>NEON AIR DASHBOARD</h1>
+    </div>
+    <div class="chip live">
+      <span class="dot"></span>
+      LIVE
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero glass">
+      <div>
+        <p class="section-label">NETWORK</p>
+        <h2 id="apName">seal_AP</h2>
+        <p class="muted">Connect to the AP and open the local dashboard</p>
+      </div>
+
+      <div class="hero-right">
+        <div class="mini-box">
+          <span>IP</span>
+          <strong id="ip">192.168.49.1</strong>
+        </div>
+        <div class="mini-box">
+          <span>CLIENTS</span>
+          <strong id="clients">0</strong>
+        </div>
+        <div class="mini-box">
+          <span>UPTIME</span>
+          <strong id="uptime">0s</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card glass cyan">
+        <p>Temperature</p>
+        <h3><span id="temperature">0.0</span> °C</h3>
+      </div>
+
+      <div class="card glass pink">
+        <p>Humidity</p>
+        <h3><span id="humidity">0.0</span> %</h3>
+      </div>
+
+      <div class="card glass purple">
+        <p>Noise</p>
+        <h3><span id="noise">0</span> dB</h3>
+      </div>
+
+      <div class="card glass green">
+        <p>Light</p>
+        <h3><span id="lux">0</span> Lux</h3>
+      </div>
+
+      <div class="card glass orange">
+        <p>PM2.5</p>
+        <h3><span id="pm25">0</span> ug/m³</h3>
+      </div>
+
+      <div class="card glass blue">
+        <p>PM10</p>
+        <h3><span id="pm10">0</span> ug/m³</h3>
+      </div>
+
+      <div class="card glass red">
+        <p>Pressure</p>
+        <h3><span id="pressure">0.0</span> kPa</h3>
+      </div>
+
+      <div class="card glass white">
+        <p>ESP32 Heap</p>
+        <h3><span id="heap">0</span> bytes</h3>
+      </div>
+    </section>
+
+    <section class="panel glass">
+      <div class="panel-header">
+        <h3>System Status</h3>
+        <span id="sensorReady" class="status-badge off">Sensor Offline</span>
+      </div>
+      <div id="logBox" class="log-box">
+        Waiting for live data...
+      </div>
+    </section>
+  </main>
+
+  <script src="/script.js"></script>
+</body>
+</html>
