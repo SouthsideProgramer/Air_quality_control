@@ -3,13 +3,13 @@
 ModbusMaster node;
 
 // D3 = GPIO6, D4 = GPIO7
-#define RXD2 6
-#define TXD2 7
+#define RXD2 9
+#define TXD2 8
 
 // Nếu dùng module RS485 có DE/RE thì bật lên
 // #define MAX485_DE_RE 4
 
-uint8_t foundSlaveID = 0;
+uint8_t foundSlaveID = 21;
 
 // ===== Biến lưu dữ liệu mới nhất =====
 static float g_humidity = 0.0f;
@@ -29,34 +29,9 @@ void postTransmission() {
   // digitalWrite(MAX485_DE_RE, LOW);
 }
 
-bool scanModbusSlave() {
-  for (uint8_t id = 1; id <= 247; id++) {
-    node.begin(id, Serial1);
-
-    uint8_t result = node.readHoldingRegisters(502, 1);  // test Noise register
-
-    if (result == node.ku8MBSuccess) {
-      foundSlaveID = id;
-      Serial.print("Found Modbus slave ID: ");
-      Serial.println(foundSlaveID);
-      return true;
-    }
-    delay(50);
-  }
-
-  Serial.println("No Modbus slave found!");
-  return false;
-}
 
 void readAirSensorBlock(void *vParameters) {
   while (true) {
-    if (foundSlaveID == 0) {
-      Serial.println("No slave ID found, skip reading.");
-      g_sensorReady = false;
-      vTaskDelay(5000 / portTICK_PERIOD_MS);
-      continue;
-    }
-
     node.begin(foundSlaveID, Serial1);
     uint8_t result = node.readHoldingRegisters(500, 8);
 
@@ -109,16 +84,10 @@ void AIRsetup() {
   digitalWrite(MAX485_DE_RE, LOW);
   */
 
-  Serial1.begin(4800, SERIAL_8N1, RXD2, TXD2);
+  Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
 
   node.preTransmission(preTransmission);
   node.postTransmission(postTransmission);
-
-  if (scanModbusSlave()) {
-    Serial.println("Air sensor Modbus communication successful");
-  } else {
-    Serial.println("Air sensor Modbus communication failed");
-  }
 
   Serial.println("Air sensor Modbus init done");
   xTaskCreate(readAirSensorBlock, "ReadAirSensor", 8192, NULL, 1, NULL);

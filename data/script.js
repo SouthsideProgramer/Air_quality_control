@@ -3,6 +3,9 @@ async function fetchStatus() {
     const res = await fetch('/api/status');
     const data = await res.json();
 
+    console.log(data); // Debug: kiểm tra JSON trả về
+
+    // ==== Air Sensor ====
     document.getElementById('apName').textContent = data.ap_name;
     document.getElementById('ip').textContent = data.ip;
     document.getElementById('clients').textContent = data.clients;
@@ -15,13 +18,23 @@ async function fetchStatus() {
     document.getElementById('pm25').textContent = data.pm25;
     document.getElementById('pm10').textContent = data.pm10;
     document.getElementById('pressure').textContent = data.pressure.toFixed(1);
-    document.getElementById('heap').textContent = data.heap;
 
+    // ==== Water Sensor ====
+    document.getElementById('waterTemp').textContent =
+      data.water_temp && data.water_temp !== 0 ? data.water_temp.toFixed(1) + ' °C' : 'Loading...';
+    document.getElementById('ecVoltage').textContent =
+      data.ec_voltage && data.ec_voltage !== 0 ? data.ec_voltage.toFixed(3) + ' V' : 'Loading...';
+    document.getElementById('ecRaw').textContent =
+      data.ec_raw && data.ec_raw !== 0 ? data.ec_raw.toFixed(3) + ' mS/cm' : 'Loading...';
+    document.getElementById('ecComp').textContent =
+      data.ec_comp && data.ec_comp !== 0 ? data.ec_comp.toFixed(3) + ' mS/cm' : 'Loading...';
+
+    // ==== Sensor Status Badge ====
     const badge = document.getElementById('sensorReady');
     const logBox = document.getElementById('logBox');
 
     if (data.sensor_ready) {
-      badge.textContent = 'Sensor Online';
+      badge.textContent = 'Air sensor Online';
       badge.classList.remove('off');
       badge.classList.add('on');
 
@@ -35,12 +48,12 @@ async function fetchStatus() {
         `Pressure: ${data.pressure.toFixed(1)} kPa\n` +
         `Light: ${data.lux} Lux`;
     } else {
-      badge.textContent = 'Sensor Offline';
+      badge.textContent = 'Air sensor Offline';
       badge.classList.remove('on');
       badge.classList.add('off');
 
       logBox.textContent =
-        `Waiting for sensor data...\n` +
+        `Waiting for air sensor data...\n` +
         `Check Modbus wiring / slave ID / baudrate.\n` +
         `AP is still running normally at ${data.ip}`;
     }
@@ -50,6 +63,7 @@ async function fetchStatus() {
   }
 }
 
+// ==== Format uptime ====
 function formatUptime(sec) {
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
@@ -57,5 +71,6 @@ function formatUptime(sec) {
   return `${h}h ${m}m ${s}s`;
 }
 
+// ==== Fetch interval ====
 fetchStatus();
 setInterval(fetchStatus, 2000);

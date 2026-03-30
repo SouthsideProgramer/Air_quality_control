@@ -1,6 +1,6 @@
 #include "TaskWifi.h" // Note: Usually <WiFi.h> with a capital 'F' and angle brackets
 
-const char* ssid = "seal_AP";
+const char* ssid = "nongnghiep";
 const char* password ="12345678";
 
 IPAddress local_ip(192,168,49,1);
@@ -22,5 +22,4 @@ void Wifi_setup()
     Serial.println(ssid);
     Serial.println("IP Address: ");
     Serial.println(WiFi.softAPIP()); 
-
 }

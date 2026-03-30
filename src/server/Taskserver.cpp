@@ -1,6 +1,7 @@
 #include "Taskserver.h"
 #include "../src/connect/TaskWifi.h"
 #include "../src/sensor/air_quality.h"
+#include "../src/sensor/water_sensor.h"
 
 #include <WiFi.h>
 #include <WebServer.h>
@@ -38,24 +39,35 @@ static void handleRoot() {
   }
 }
 
-static void handleStatus() {
-  String json = "{";
-  json += "\"ap_name\":\"seal_AP\",";
-  json += "\"ip\":\"" + WiFi.softAPIP().toString() + "\",";
-  json += "\"clients\":" + String(WiFi.softAPgetStationNum()) + ",";
-  json += "\"heap\":" + String(ESP.getFreeHeap()) + ",";
-  json += "\"uptime\":" + String(millis() / 1000) + ",";
-  json += "\"sensor_ready\":" + String(isAirSensorReady() ? "true" : "false") + ",";
-  json += "\"temperature\":" + String(getAirTemperature(), 1) + ",";
-  json += "\"humidity\":" + String(getAirHumidity(), 1) + ",";
-  json += "\"noise\":" + String(getAirNoise()) + ",";
-  json += "\"pm25\":" + String(getAirPM25()) + ",";
-  json += "\"pm10\":" + String(getAirPM10()) + ",";
-  json += "\"pressure\":" + String(getAirPressure(), 1) + ",";
-  json += "\"lux\":" + String(getAirLux());
-  json += "}";
 
-  server.send(200, "application/json", json);
+static void handleStatus() {
+    String json = "{";
+
+    json += "\"ap_name\":\"seal_AP\",";
+    json += "\"ip\":\"" + WiFi.softAPIP().toString() + "\",";
+    json += "\"clients\":" + String(WiFi.softAPgetStationNum()) + ",";
+    json += "\"heap\":" + String(ESP.getFreeHeap()) + ",";
+    json += "\"uptime\":" + String(millis() / 1000) + ",";
+
+    // Air sensor
+    json += "\"sensor_ready\":" + String(isAirSensorReady() ? "true" : "false") + ",";
+    json += "\"temperature\":" + String(getAirTemperature(), 1) + ",";
+    json += "\"humidity\":" + String(getAirHumidity(), 1) + ",";
+    json += "\"noise\":" + String(getAirNoise()) + ",";
+    json += "\"pm25\":" + String(getAirPM25()) + ",";
+    json += "\"pm10\":" + String(getAirPM10()) + ",";
+    json += "\"pressure\":" + String(getAirPressure(), 1) + ",";
+    json += "\"lux\":" + String(getAirLux()) + ",";
+
+    // Water sensor
+    json += "\"water_temp\":" + String(getWaterTemp(), 1) + ",";
+    json += "\"ec_voltage\":" + String(getECVoltage(), 3) + ",";
+    json += "\"ec_raw\":" + String(getECRaw_mS(), 3) + ",";
+    json += "\"ec_comp\":" + String(getECComp_mS(), 3);
+
+    json += "}";
+
+    server.send(200, "application/json", json);
 }
 
 static void handleNotFound() {
