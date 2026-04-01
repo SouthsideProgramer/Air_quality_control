@@ -63,6 +63,34 @@ async function fetchStatus() {
   }
 }
 
+async function fetchKValue() {
+  try {
+    const res = await fetch('/api/kvalue');
+    const data = await res.json();
+    document.getElementById('kValueInput').value = data.k_value.toFixed(3);
+  } catch(e) { console.error(e); }
+}
+
+document.getElementById('kValueBtn').addEventListener('click', async () => {
+  const val = parseFloat(document.getElementById('kValueInput').value);
+  if (isNaN(val)) return;
+
+  try {
+    await fetch('/api/kvalue', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},  // quan trọng
+      body: JSON.stringify({k_value: val})
+    });
+    fetchKValue(); // refresh input
+    console.log("[KValue] Set to", val);
+  } catch(e) {
+    console.error(e);
+  }
+});
+
+// Gọi lúc load
+fetchKValue();
+
 // ==== Format uptime ====
 function formatUptime(sec) {
   const h = Math.floor(sec / 3600);

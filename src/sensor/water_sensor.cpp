@@ -35,9 +35,11 @@ uint16_t readMilliVolt(int pin, int samples = 20) {
 
 // ==== Task đọc sensor RTOS ====
 void TaskReadSensors(void *pvParameters) {
-    DFRobot_ECPRO ec(kValue);
+    DFRobot_ECPRO ec;    // tạo 1 lần, duy nhất
 
     for (;;) {
+        ec.setCalibration(kValue);  // dùng giá trị mới mỗi vòng
+
         uint16_t ec_mV = readMilliVolt(EC_PIN);
         uint16_t te_mV = readMilliVolt(TE_PIN);
 
@@ -59,8 +61,6 @@ void TaskReadSensors(void *pvParameters) {
             gSensorData.ecComp_mS = ecComp_mS;
             gSensorData.ecComp_uS = ecComp_uS;
             xSemaphoreGive(gSensorMutex);
-
-            // đánh dấu sensor đã sẵn sàng
             gWaterReady = true;
         }
 
@@ -80,6 +80,7 @@ void TaskPrintSerial(void *pvParameters) {
             Serial.print("EC Voltage: "); Serial.print(localData.ecVoltage, 3); Serial.print(" V\t");
             Serial.print("EC Raw: "); Serial.print(localData.ecRaw_mS, 3); Serial.print(" mS/cm\t");
             Serial.print("EC Comp: "); Serial.print(localData.ecComp_mS, 3); Serial.println(" mS/cm");
+            Serial.print("K Value: "); Serial.println(kValue, 3);
         }
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -146,4 +147,16 @@ float getECComp_mS() {
 
 bool isWaterReady() {
     return gWaterReady;
+}
+
+float getKValue() {
+    return kValue;
+}
+
+void setKValue(float val) {
+    if (val > 0.5 && val < 2.0) {   // tránh lỗi
+        kValue = val;
+        Serial.print("[KValue] Updated: ");
+        Serial.println(kValue, 3);
+    }
 }

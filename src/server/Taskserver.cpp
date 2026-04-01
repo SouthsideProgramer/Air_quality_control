@@ -76,6 +76,32 @@ static void handleNotFound() {
   }
 }
 
+static void handleGetKValue() {
+    String json = "{";
+    json += "\"k_value\":" + String(getKValue(), 3);
+    json += "}";
+    server.send(200, "application/json", json);
+}
+
+static void handleSetKValue() {
+    if (server.hasArg("plain")) {
+        String body = server.arg("plain");
+
+        StaticJsonDocument<128> doc;
+        DeserializationError err = deserializeJson(doc, body);
+
+        if (!err && doc.containsKey("k_value")) {
+            float val = doc["k_value"];
+            setKValue(val);  // cập nhật kValue
+
+            server.send(200, "application/json", "{\"status\":\"ok\"}");
+            Serial.print("[Server] KValue updated: "); Serial.println(val,3);
+            return;
+        }
+    }
+    server.send(400, "application/json", "{\"status\":\"error\"}");
+}
+
 void WebServer_setup() {
   if (!SPIFFS.begin(true)) {
     Serial.println("SPIFFS mount failed");
@@ -85,7 +111,8 @@ void WebServer_setup() {
   server.on("/", handleRoot);
   server.on("/api/status", HTTP_GET, handleStatus);
   server.onNotFound(handleNotFound);
-
+server.on("/api/kvalue", HTTP_GET, handleGetKValue);
+server.on("/api/kvalue", HTTP_POST, handleSetKValue);
   server.begin();
 
   Serial.println("WebServer started");

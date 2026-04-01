@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include "../src/sensor/DFRobot_ECPRO.h"
 
+
 // ===== Setup =====
 void Watersetup();
 
@@ -15,5 +16,7 @@ float getECComp_mS();
 
 // Kiểm tra sensor đã sẵn sàng chưa
 bool isWaterReady();
+float getKValue();
+void setKValue(float val);
 
 #endif
