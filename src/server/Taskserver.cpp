@@ -65,6 +65,10 @@ static void handleStatus() {
     json += "\"ec_raw\":" + String(getECRaw_mS(), 3) + ",";
     json += "\"ec_comp\":" + String(getECComp_mS(), 3);
 
+    // GPS
+    // ==== GPS ====
+    json += ",\"latitude\":" + String(latitude, 6);
+    json += ",\"longitude\":" + String(longitude, 6);
     json += "}";
 
     server.send(200, "application/json", json);

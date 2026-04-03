@@ -29,6 +29,13 @@ async function fetchStatus() {
     document.getElementById('ecComp').textContent =
       data.ec_comp && data.ec_comp !== 0 ? data.ec_comp.toFixed(3) + ' mS/cm' : 'Loading...';
 
+      // ==== GPS ====
+document.getElementById('latitude').textContent =
+  data.latitude ? data.latitude.toFixed(6) : 'Loading...';
+document.getElementById('longitude').textContent =
+  data.longitude ? data.longitude.toFixed(6) : 'Loading...';
+
+
     // ==== Sensor Status Badge ====
     const badge = document.getElementById('sensorReady');
     const logBox = document.getElementById('logBox');

@@ -30,6 +30,8 @@ String createPayload()
     doc["ec_raw"] = getECRaw_mS();
     doc["ec_comp"] = getECComp_mS();
 
+    doc["gps_lat"] = latitude;
+    doc["gps_lng"] = longitude;
     String payload;
     serializeJson(doc, payload);
     return payload;
